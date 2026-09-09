@@ -1,0 +1,8 @@
+# 统一跨平台行尾处理：文本文件由 git 按仓库规范管理
+* text=auto
+
+# 明确强制 LF（Python 源码建议 LF）
+*.py text eol=lf
+
+# 明确强制 CRLF（Windows 批处理脚本等，如有需要再放开）
+# *.bat text eol=crlf
