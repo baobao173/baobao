@@ -27,5 +27,6 @@ dist/
 build/
 *.egg-info/
 
+# 本地缓存
 .cache/
 .ipynb_checkpoints/
