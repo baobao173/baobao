@@ -1,0 +1,10 @@
+{
+  "training_products": 4467,
+  "products_for_80pct_sales": 929,
+  "share_products_for_80pct_sales": 0.20796955451085739,
+  "selected_sales_share": 0.13571661797400214,
+  "median_selected_cv": 0.9808393261480473,
+  "test_mean_units": 329.24333333333334,
+  "validation_mean_units": 246.42333333333335,
+  "test_vs_validation_growth": 0.3360883033262543
+}

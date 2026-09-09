@@ -1,13 +1,5 @@
-"""第一张王牌图：24 小时平均需求曲线（工作日 vs 周末）——"潮汐双峰"。
+"""第一张图：24 小时平均需求曲线（工作日 vs 周末）——"潮汐双峰"。"""
 
-目的：
-1. 验证真实数据可用（读入清洗后的 856 万行）；
-2. 直观展示共享单车早晚高峰的"潮汐双峰"结构；
-3. 把"每小时平均需求"摘要表落到 output/results/，供后续结论引用。
-
-用法：
-    python scripts/fig01_hourly_tide.py
-"""
 from __future__ import annotations
 
 import sys
@@ -27,8 +19,10 @@ USE_COLS = ["start_time", "hour", "is_weekend"]  # 画这张图只需 3 列，�
 def main() -> None:
     print("读取清洗后数据 ...")
     df = pd.read_csv(CLEAN_CSV, usecols=USE_COLS, parse_dates=["start_time"])
-    print(f"共 {len(df):,} 条行程，日期范围 "
-          f"{df['start_time'].min():%Y-%m-%d} ~ {df['start_time'].max():%Y-%m-%d}")
+    print(
+        f"共 {len(df):,} 条行程，日期范围 "
+        f"{df['start_time'].min():%Y-%m-%d} ~ {df['start_time'].max():%Y-%m-%d}"
+    )
 
     # 第一步聚合：按 (日期, 小时, 是否周末) 统计每小时总骑行量
     hourly = (
@@ -39,7 +33,9 @@ def main() -> None:
         .reset_index()
     )
     # 第二步聚合：工作日/周末内求平均 -> 代表"平均每个工作日/周末某小时的骑行量"
-    avg = hourly.groupby(["hour", "is_weekend"], observed=True)["rides"].mean().unstack()
+    avg = (
+        hourly.groupby(["hour", "is_weekend"], observed=True)["rides"].mean().unstack()
+    )
 
     out_csv = ROOT / "output/results/hourly_demand_avg.csv"
     out_csv.parent.mkdir(parents=True, exist_ok=True)
@@ -54,7 +50,9 @@ def main() -> None:
     for is_we, label in [(False, "工作日"), (True, "周末")]:
         s = avg[is_we]
         peak_hour = int(s.idxmax())
-        print(f"{label}: 日均每小时均值 {s.mean():,.0f} 次；峰值出现在 {peak_hour}:00（约 {s.max():,.0f} 次/时）")
+        print(
+            f"{label}: 日均每小时均值 {s.mean():,.0f} 次；峰值出现在 {peak_hour}:00（约 {s.max():,.0f} 次/时）"
+        )
 
 
 if __name__ == "__main__":

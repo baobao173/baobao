@@ -1,0 +1,11 @@
+{
+  "country": "United Kingdom",
+  "n_products": 25,
+  "min_active_share": 0.8,
+  "validation_weeks": 12,
+  "test_weeks": 12,
+  "ridge_alpha": 10.0,
+  "safety_factors": [0, 0.5, 1, 1.5, 2, 3],
+  "shortage_penalties": [2, 5, 10],
+  "base_penalty": 5
+}

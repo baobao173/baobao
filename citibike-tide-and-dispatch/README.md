@@ -1,93 +1,35 @@
-# 城市共享单车"潮汐"分析与智能调度决策支持（纽约 Citi Bike）
+# 共享单车需求与站点流量分析
 
-> *Data-driven bike-sharing operations analysis (NYC Citi Bike)*
+使用纽约 Citi Bike 2019 年 5—8 月骑行记录，分析一天中何时骑行量高、哪些站点在早高峰净借出较多，以及历史需求能否帮助预测下一小时的系统骑行量。
 
-一个用纽约 Citi Bike 官方骑行数据做的完整数据分析项目：量化早晚"潮汐"失衡、
-解释天气如何影响需求、预测每小时需求量、给出调度建议。全程 Python，可一键复现。
+## 结果
 
-## 研究问题
+- 清洗后保留 8,564,754 条行程，涉及 834 个唯一站点。
+- 预测按时间划分训练、验证和测试；验证期选出随机森林，测试 MAE 为 278.8 次/小时，WAPE 为 8.89%。
+- 站点排序反映历史净流量，用于确定优先核查库存的站点。没有库存和桩位数据，因此没有计算实际缺车率或派车数量。
 
-共享单车系统的核心成本不是车辆，而是**车放错了地方**：工作日早高峰，车辆被单向从居住区"骑"到办公区，导致早上"一边没车借、一边没桩还"。本项目把 **单车=库存、站点=门店、骑行=需求**，回答运营决策的四个问题：
+![小时骑行量](output/figures/01_hourly_demand_weekday_weekend.png)
 
-1. 潮汐失衡有多严重、集中在哪些站点/时段？（描述）
-2. 日历结构与天气如何影响需求？（归因）
-3. 能否预测下一小时的需求量？（预测）
-4. 何时、何地、调多少车？（决策）
+## 运行
 
-## 核心结果
-
-| # | 发现 | 关键数字 |
-|---|---|---|
-| 1 | 工作日"早 8 晚 18"双峰潮汐；周末午后单峰；年卡=通勤、临时卡=休闲 | 工作日日均 71,806 vs 周末 64,166 次（p<0.01）；周末单次时长 +23% |
-| 2 | 站点级潮汐：840 站中 486 居住型 / 308 办公型；**工作日每天约 4,700 车次**单向净迁移；失衡分散（Top 100 站仅覆盖 58%） | 图 5–8、13–14 |
-| 3 | 天气归因：**下雨时段需求 −41%**、雨日总量 −20%；温度倒 U（顶点 25.8°C） | OLS R²=0.773，p<0.001 |
-| 4 | 小时级预测：随机森林 **MAE≈270 辆/时（约需求的 9%），较朴素基线改善 67%**；岭回归 R²=0.923、RF R²=0.956 | 图 11–12 |
-
-一句话决策建议：早高峰前（5–7 点）给居住型站点补库存、白天平峰转运办公区堆积车辆腾桩、
-雨天动态下调运力，并把逐时预测作为逐站备车的输入。
-
-## 数据来源
-
-| 数据 | 来源 | 说明 |
-|---|---|---|
-| 骑行记录 | [Citi Bike System Data](https://citibikenyc.com/system-data)（Amazon S3 官方公开） | 2019 年 5–8 月，8,575,221 条、15 列旧版格式 |
-| 气象 | [Open-Meteo 历史天气 API](https://open-meteo.com/)（基于 ECMWF **ERA5** 再分析） | 纽约中央公园，逐小时 2,952 个观测、无缺失 |
-
-版权：数据归 Citi Bike / Lyft 与 ERA5/Open-Meteo；本仓库只含代码与聚合结果，原始文件不入库（可用脚本复现）。
-
-## 部分图表
-
-![潮汐双峰](output/figures/01_hourly_demand_weekday_weekend.png)
-![温度与需求](output/figures/fig09_temp_demand.png)
-![预测 vs 实际](output/figures/fig11_forecast_vs_actual.png)
-![调度时机](output/figures/fig13_dispatch_timing.png)
-
-（完整图表见 `output/figures/`，共 14 张。）
-
-## 仓库结构
-
-```
-citibike-tide-and-dispatch/
-├── README.md                 本文件
-├── LICENSE                   MIT
-├── docs/
-│   ├── report.md             完整分析报告（含方法、结果、局限）
-│   ├── PROJECT_HIGHLIGHTS.md 项目亮点梳理
-│   ├── data_dictionary.md    字段字典 + 实测记录
-│   └── ROADMAP.md            里程碑
-├── src/                      Python 源码（含注释）
-│   ├── download_data.py      Citi Bike 下载（多线程 Range/断点续传）
-│   ├── clean.py              清洗流水线（规则 + 日志）
-│   ├── weather_download.py   气象获取（Open-Meteo/ERA5）
-│   └── viz.py                统一绘图风格
-├── scripts/                  各阶段脚本（见下表）
-├── output/figures/           结果图（入库）
-└── output/results/           数值结果（入库）
-```
-
-| 脚本 | 内容 |
-|---|---|
-| `run_all.py` | 一键复现全流程 |
-| `build_agg_tables.py` | 把 856 万行主表聚合成小时/日/站点级小表 |
-| `fig01_hourly_tide.py` | 图 1：24h 需求曲线 |
-| `phase3_eda.py` | 图 2–4 + 统计检验 |
-| `phase3_tide.py` | 图 5–8 + 潮汐量化 |
-| `phase4_weather.py` | 图 9–10 + OLS 归因 |
-| `phase5_forecast.py` | 图 11–12 + 预测对比 |
-| `phase6_dispatch.py` | 图 13–14 + 调度决策建议 |
-
-## 快速开始
+推荐 Python 3.12。在本目录创建并激活虚拟环境后执行：
 
 ```bash
-# 环境（Python 3.10+）
-python -m venv .venv
-.venv/Scripts/python -m pip install -r requirements.txt     # Windows
-# source .venv/bin/activate && pip install -r requirements.txt  # macOS/Linux
-
-# 全流程复现：下载(约 819MB，可断点续传) → 清洗 → 聚合 → 气象 → 分析 → 预测 → 决策
-.venv/Scripts/python scripts/run_all.py
+python -m pip install -r requirements.txt
+python scripts/run_all.py
 ```
 
-## 许可
+首次运行下载约 819 MB 的官方年度包，仅解压 5—8 月。磁盘预留约 4 GB；清洗与聚合按块处理。已有数据时可单独运行步骤，例如：
 
-代码 [MIT](LICENSE)；数据版权归 Citi Bike / Lyft（[System Data 使用条款](https://citibikenyc.com/system-data)）与 ERA5/Open-Meteo 所有。
+```bash
+python scripts/run_all.py --steps phase5 phase6
+python -m unittest discover -s tests -v
+```
+
+## 文档
+
+- [分析报告](docs/report.md)：数据、方法、结果和局限
+- [数据说明](docs/data_dictionary.md)：来源、字段与时间口径
+- [学习笔记](docs/learning_notes.md)：方法解释与复现练习
+
+`src/` 负责下载、清洗和绘图设置，`scripts/` 是分析入口，`output/` 保存结果。代码使用 [MIT 许可](LICENSE)，数据条款见数据说明。

@@ -1,23 +1,17 @@
-"""清洗脚本：合并原始月度 CSV -> 统一列名 -> 业务规则清洗 -> 派生时间字段。
+"""清洗脚本：合并原始月度 CSV -> 统一列名 -> 业务规则清洗 -> 派生时间字段。"""
 
-设计说明（对应 README 分析流程第 1 步）
-----------------------------------------
-* 每条清洗规则都记录"剔除了多少行、为什么"，保证过程可复现、可在复试讲清；
-* 派生字段（小时/星期/是否周末/时段）为后续潮汐与预测分析铺路；
-* 输出单文件 data/processed/trips_clean.csv.gz，避免后续脚本重复读原始数据。
-
-用法：
-    python src/clean.py [--raw-dir data/raw] [--out data/processed/trips_clean.csv.gz]
-"""
 from __future__ import annotations
 
 import argparse
+import json
 import logging
 from pathlib import Path
 
 import pandas as pd
 
-logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(message)s")
+logging.basicConfig(
+    level=logging.INFO, format="%(asctime)s [%(levelname)s] %(message)s"
+)
 log = logging.getLogger("clean")
 
 # 官方旧版 15 列 -> 本项目统一命名（全小写、空格转下划线）
@@ -40,7 +34,7 @@ COLUMN_MAP = {
 }
 
 # 业务清洗规则（数值单位：秒）
-MIN_DURATION_SEC = 60     # 官方已剔除 <60s，这里保留同样口径便于叙述
+MIN_DURATION_SEC = 60  # 官方已剔除 <60s，这里保留同样口径便于叙述
 MAX_DURATION_SEC = 4 * 3600  # 超过 4 小时视为异常（异常归还/测试行程）
 
 STATION_ID_COLS = ["start_station_id", "end_station_id"]
@@ -50,9 +44,15 @@ STATION_GEO_COLS = ["start_lat", "start_lng", "end_lat", "end_lng"]
 def load_raw_files(raw_dir: Path) -> pd.DataFrame:
     """读取 raw 目录下所有年份月度 CSV 并合并。"""
     # 匹配所有月度 CSV（超百万行的月份会被官方拆成 _1/_2/_3 多个文件）
-    files = sorted(raw_dir.glob("*-citibike-tripdata*.csv"))
+    files = sorted(
+        p
+        for p in raw_dir.glob("2019*-citibike-tripdata*.csv")
+        if p.name[4:6] in {"05", "06", "07", "08"}
+    )
     if not files:
-        raise FileNotFoundError(f"{raw_dir} 下没有找到原始 CSV，请先运行 src/download_data.py")
+        raise FileNotFoundError(
+            f"{raw_dir} 下没有找到原始 CSV，请先运行 src/download_data.py"
+        )
     frames = []
     for f in files:
         df = pd.read_csv(f, parse_dates=["starttime", "stoptime"], low_memory=False)
@@ -79,10 +79,9 @@ def clean_frame(df: pd.DataFrame) -> tuple[pd.DataFrame, dict]:
     df = df[mask_dur]
 
     # 规则 3：关键站点字段完整（站点编号与经纬度）
-    mask_station = (
-        df[STATION_ID_COLS].notna().all(axis=1)
-        & df[STATION_GEO_COLS].notna().all(axis=1)
-    )
+    mask_station = df[STATION_ID_COLS].notna().all(axis=1) & df[
+        STATION_GEO_COLS
+    ].notna().all(axis=1)
     log_book["起终点站点信息缺失"] = int((~mask_station).sum())
     df = df[mask_station]
 
@@ -122,33 +121,53 @@ def derive_features(df: pd.DataFrame) -> pd.DataFrame:
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--raw-dir", type=Path, default=Path("data/raw"))
-    parser.add_argument("--out", type=Path, default=Path("data/processed/trips_clean.csv.gz"))
-    parser.add_argument("--sample-lines", type=int, default=5,
-                        help="打印清洗结果的样例行数，便于快速核对")
+    parser.add_argument(
+        "--out", type=Path, default=Path("data/processed/trips_clean.csv.gz")
+    )
+    parser.add_argument(
+        "--sample-lines",
+        type=int,
+        default=5,
+        help="打印清洗结果的样例行数，便于快速核对",
+    )
     args = parser.parse_args()
 
-    raw = load_raw_files(args.raw_dir)
-    raw = raw.rename(columns=COLUMN_MAP)
+    import gzip
 
-    cleaned, log_book = clean_frame(raw)
-    cleaned = derive_features(cleaned)
-
+    files = sorted(
+        p
+        for p in args.raw_dir.glob("2019*-citibike-tripdata*.csv")
+        if p.name[4:6] in {"05", "06", "07", "08"}
+    )
+    if not files:
+        raise FileNotFoundError("请先下载 2019 年 5–8 月的 CSV")
     args.out.parent.mkdir(parents=True, exist_ok=True)
-    cleaned.to_csv(args.out, index=False, compression="gzip")
-    log.info("已保存清洗后数据: %s（%.1f MB）", args.out,
-             args.out.stat().st_size / 1048576)
-
-    # 打印清洗日志（也写入 output/results/，便于复查）
-    print("\n===== 清洗日志 =====")
-    print(f"原始行数: {len(raw)}")
-    for rule, cnt in log_book.items():
-        print(f"  - {rule}: {cnt:,} 行 ({cnt / len(raw) * 100:.2f}%)")
-    print(f"清洗后行数: {len(cleaned):,}")
-
-    print("\n===== 字段预览 =====")
-    print(cleaned.head(args.sample_lines).to_string())
-    print("\n===== 各时段骑行量 =====")
-    print(cleaned["period"].value_counts().to_string())
+    n_raw = n_clean = 0
+    log_book = {}
+    with gzip.open(args.out, "wt", encoding="utf-8", newline="") as out:
+        for path in files:
+            for raw in pd.read_csv(path, chunksize=250000, low_memory=False):
+                raw = raw.rename(columns=COLUMN_MAP)
+                for col in ["start_time", "end_time"]:
+                    raw[col] = pd.to_datetime(raw[col], errors="coerce", format="mixed")
+                cleaned, counts = clean_frame(raw)
+                cleaned = derive_features(cleaned)
+                cleaned.to_csv(out, index=False, header=n_raw == 0)
+                n_raw += len(raw)
+                n_clean += len(cleaned)
+                for rule, count in counts.items():
+                    log_book[rule] = log_book.get(rule, 0) + count
+            print(f"{path.name}: 累计保留 {n_clean:,} / {n_raw:,}", flush=True)
+    audit = Path(__file__).resolve().parent.parent / "output/results/cleaning.json"
+    audit.parent.mkdir(parents=True, exist_ok=True)
+    audit.write_text(
+        json.dumps(
+            {"raw_rows": n_raw, "clean_rows": n_clean, "removed_by_rule": log_book},
+            ensure_ascii=False,
+            indent=2,
+        ),
+        encoding="utf-8",
+    )
     return 0
 
 

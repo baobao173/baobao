@@ -19,7 +19,7 @@ def check_guess(secret: int, guess: int) -> str:
 def play(secret: int) -> int:
     """在终端里玩一局猜数字，返回用掉的猜测次数。
 
-    提示文本由 guess 的返回值决定：太小提示“太小了”，
+    提示文本由 check_guess 的返回值决定：太小提示“太小了”，
     太大提示“太大了”，猜中则结束游戏。
     """
     hints = {
@@ -50,7 +50,10 @@ def play(secret: int) -> int:
 
 def main() -> None:
     secret = random.randint(MIN_NUMBER, MAX_NUMBER)
-    play(secret)
+    try:
+        play(secret)
+    except (EOFError, KeyboardInterrupt):
+        print("\n游戏结束。")
 
 
 if __name__ == "__main__":

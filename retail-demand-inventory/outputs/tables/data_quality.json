@@ -1,0 +1,20 @@
+{
+  "raw_rows": 1067371,
+  "missing_customer": 243007,
+  "duplicate_candidates_retained": 34335,
+  "source_url": "https://archive.ics.uci.edu/static/public/502/online%2Bretail%2Bii.zip",
+  "sha256": "572e36277c2390fbfde10664750731e0a86f55e33470d91919085f0408e67bfb",
+  "cancel_or_negative_rows": 22951,
+  "removed_not_cancelled": 22951,
+  "removed_positive_quantity_price": 2750,
+  "removed_valid_date": 0,
+  "removed_selected_market": 83169,
+  "removed_physical_code_pattern": 2650,
+  "removed_incomplete_weeks": 29864,
+  "clean_rows": 925987,
+  "weeks": 104,
+  "products": 25,
+  "train_end_exclusive": "2011-06-20",
+  "first_week": "2009-12-07",
+  "last_week": "2011-11-28"
+}

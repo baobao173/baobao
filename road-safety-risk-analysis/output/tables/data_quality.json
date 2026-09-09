@@ -1,0 +1,23 @@
+{
+  "raw_rows": 411883,
+  "clean_rows": 372578,
+  "removed_rows": 39305,
+  "sources": [
+    {
+      "year": 2021,
+      "sha256": "beb13607fb35a35626f5eb66826f410e334e9cfe7134bea24e773e0d8f08c9b9"
+    },
+    {
+      "year": 2022,
+      "sha256": "411a0eafa2adde65ababb3135a8d91b7d00e84d887f2f5ceda4ed6b82c129547"
+    },
+    {
+      "year": 2023,
+      "sha256": "02efa478512baa9b7781e0fdfc0bfe152dcf76cc7fa3225b0833db16f4331c4b"
+    },
+    {
+      "year": 2024,
+      "sha256": "de63df852b245f44f73a9b4e35662466dc2ea0df269658b16e8c8721bbaac88a"
+    }
+  ]
+}

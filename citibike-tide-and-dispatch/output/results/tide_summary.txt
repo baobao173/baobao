@@ -1,17 +1,17 @@
 ===== 潮汐量化摘要（2019-05-01 ~ 2019-08-31） =====
-站点总数: 840
-站点类型: {'早高峰净借出(居住区)': 486, '早高峰净归还(办公区)': 308, '均衡': 46}
-早高峰系统潮汐迁移量：工作日日均 4,696 辆，周末日均 1,370 辆
+站点总数: 834
+站点类型: {'早高峰净借出': 513, '早高峰净归还': 299, '均衡': 22}
+早高峰系统潮汐迁移量：工作日日均 4,820 辆，周末日均 1,623 辆
 
-早高峰净借出 Top5（居住区，车被骑走）:
-  12 Ave & W 40 St: 净借出 7,351
-  E 13 St & Avenue A: 净借出 6,959
-  E 10 St & Avenue A: 净借出 6,886
-  E 2 St & Avenue B: 净借出 5,728
-  8 Ave & W 31 St: 净借出 5,638
-早高峰净归还 Top5（办公区，车涌入）:
-  Broadway & E 22 St: 净归还 11,408
-  E 47 St & Park Ave: 净归还 10,795
-  Grand Army Plaza & Central Park S: 净归还 10,722
-  North Moore St & Greenwich St: 净归还 10,446
-  6 Ave & Canal St: 净归还 8,814
+早高峰净借出 Top5（净借出站点，车被骑走）:
+  12 Ave & W 40 St: 净借出 7,674
+  E 10 St & Avenue A: 净借出 6,688
+  E 13 St & Avenue A: 净借出 6,407
+  8 Ave & W 31 St: 净借出 5,919
+  E 2 St & Avenue B: 净借出 5,475
+早高峰净归还 Top5（净归还站点，车涌入）:
+  North Moore St & Greenwich St: 净归还 10,902
+  E 47 St & Park Ave: 净归还 10,851
+  Grand Army Plaza & Central Park S: 净归还 10,525
+  Broadway & E 22 St: 净归还 10,273
+  W 52 St & 5 Ave: 净归还 8,504

@@ -1,4 +1,8 @@
-﻿metric,value
-n_train,264465.0
-n_test,113343.0
-roc_auc,0.5967
+metric,value
+n_train,281113.0
+n_test,91465.0
+roc_auc,0.5814357489048951
+average_precision,0.31874938574989886
+test_prevalence,0.25766140053572406
+brier,0.1883271259942787
+constant_brier,0.19151123069542586

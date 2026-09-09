@@ -1,13 +1,5 @@
-"""阶段三（EDA）：星期×小时热力图、周内日均、用户结构 + 统计检验。
+"""阶段三（EDA）：星期×小时热力图、周内日均、用户结构 + 统计检验。"""
 
-数据来源：data/processed/agg/（聚合小表，秒级完成）
-
-产出：
-  output/figures/fig02_heatmap_weekday_hour.png   星期×小时平均骑行量热力图
-  output/figures/fig03_avg_daily_by_weekday.png   一周七天日均骑行量
-  output/figures/fig04_subscriber_share_by_hour.png  年卡用户占比 24h 曲线
-  output/results/stat_tests.txt                   工作日 vs 周末的假设检验
-"""
 from __future__ import annotations
 
 import sys
@@ -28,11 +20,13 @@ WEEKDAY_CN = ["周一", "周二", "周三", "周四", "周五", "周六", "周�
 
 def fig_heatmap(hourly: pd.DataFrame) -> Path:
     """图 2：星期 × 小时 平均骑行量热力图。"""
-    pivot = hourly.pivot_table(index="weekday", columns="hour",
-                               values="rides", aggfunc="mean")
+    pivot = hourly.pivot_table(
+        index="weekday", columns="hour", values="rides", aggfunc="mean"
+    )
     fig, ax = plt.subplots(figsize=(11, 4.6))
-    sns.heatmap(pivot, ax=ax, cmap="YlGnBu",
-                cbar_kws={"label": "平均每小时骑行量（次）"})
+    sns.heatmap(
+        pivot, ax=ax, cmap="YlGnBu", cbar_kws={"label": "平均每小时骑行量（次）"}
+    )
     ax.set_yticklabels(WEEKDAY_CN, rotation=0)
     ax.set_xlabel("出发小时")
     ax.set_ylabel("星期")
@@ -51,8 +45,13 @@ def fig_weekday_bar(daily: pd.DataFrame) -> Path:
     ax.set_ylabel("日均骑行量（次）")
     ax.set_title("图 3  一周七天的日均骑行量")
     for b, v in zip(bars, mean_by_wd.values):
-        ax.text(b.get_x() + b.get_width() / 2, v * 1.01, f"{v:,.0f}",
-                ha="center", fontsize=9)
+        ax.text(
+            b.get_x() + b.get_width() / 2,
+            v * 1.01,
+            f"{v:,.0f}",
+            ha="center",
+            fontsize=9,
+        )
     ax.grid(axis="y", alpha=0.3)
     return viz.save_fig(fig, "fig03_avg_daily_by_weekday.png")
 
@@ -94,11 +93,8 @@ def run_tests(daily: pd.DataFrame, out: Path) -> str:
         f"  周末    均值 {we_dur.mean():.0f}  中位数 {we_dur.median():.0f}",
         f"  U={u2:.0f}, p={p2:.4g}  -> {'差异显著' if p2 < 0.05 else '差异不显著'}",
         "",
-        "解读提示：",
-        "  ① 日均骑行量：工作日(约 7.2 万)显著高于周末(约 6.4 万)——通勤需求驱动高强度使用；",
-        "  ② 平均时长：周末(约 17 分钟)显著长于工作日(约 14 分钟)——周末休闲骑行占比更高；",
-        "  ③ 年卡用户(Subscriber)集中于早晚高峰(见图 4)，临时用户(Customer)集中在午后与周末，",
-        "     说明工作日是通勤刚需市场，周末是休闲体验市场。",
+        "检验只作探索：相邻日期可能相关，未校正多重比较。",
+        "用户类型和峰值时间不直接等于出行目的，没有据此识别个体通勤或休闲。",
     ]
     text = "\n".join(lines)
     out.parent.mkdir(parents=True, exist_ok=True)
