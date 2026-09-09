@@ -1,6 +1,6 @@
 # 项目里程碑（ROADMAP）
 
-> 目标：研究生复试 + GitHub 展示的完整项目。
+> 目标：完成一个可公开、可复现、可用于展示的完整数据项目。
 > 原则：方法经典可解释、数字真实可复现、不堆深度学习。
 > 状态：**全部分析阶段已完成**，仓库已具备发布条件；完整报告见 `docs/report.md`。
 
@@ -8,20 +8,20 @@
 
 | 阶段 | 内容 | 状态 |
 |---|---|---|
-| 阶段一 | 整体方案设计（题目/业务/数据/流程/方法/输出/CV 素材） | ✅ |
+| 阶段一 | 整体方案设计（题目/业务/数据/流程/方法/输出） | ✅ |
 | 阶段二 | 工程骨架 + 真实数据下载验证 + 清洗 + 图 1 | ✅ |
 | 阶段三 | 时空 EDA + 潮汐量化（图 2–8，检验 + 站点分级） | ✅ |
 | 阶段四 | 天气接入 + 归因（图 9–10，OLS R²=0.773） | ✅ |
 | 阶段五 | 需求预测（图 11–12，RF MAE=270，防泄漏） | ✅ |
 | 阶段六 | 调度决策支持（图 13–14 + 建议） | ✅ |
-| 阶段七 | 报告 / CV 素材 / README / LICENSE / 发布准备 | ✅ |
+| 阶段七 | 报告 / README / LICENSE / 发布准备 | ✅ |
 
 ## 交付物索引
 
 | 你想做什么 | 打开 |
 |---|---|
 | 通读项目结论与方法 | `docs/report.md`（含 0–11 章） |
-| 写简历 / 准备面试回答 | `docs/CV_HIGHLIGHTS.md` |
+| 项目亮点整理 | `docs/PROJECT_HIGHLIGHTS.md` |
 | 查字段口径 / 数据规模 | `docs/data_dictionary.md` |
 | 看全部 14 张图 | `output/figures/` |
 | 看数值结果（模型对比/回归/检验/调度） | `output/results/` |
@@ -36,7 +36,7 @@
 - 预测：基线 MAE 818 → 岭 449 → 随机森林 270（R²=0.956），较基线改善 67%。
 - 调度：投放窗口 5–7 点；Top 100 站覆盖 58%（失衡分散）。
 
-## 复试问题清单（答案要点在 report.md §10 / CV_HIGHLIGHTS.md）
+## 讲解要点（答案要点在 report.md §10 / PROJECT_HIGHLIGHTS.md）
 
 1. 为什么选共享单车这个问题？——分布式库存 + 运营决策，贴合"智能运营/管理科学"；
 2. 数据从哪来？——Citi Bike System Data 官方一手 + Open-Meteo（ERA5），脚本可复现；
@@ -57,4 +57,4 @@
 | 3 | `scripts/phase3_tide.py` + `scripts/phase6_dispatch.py` | 净流出指标为什么这样定义？覆盖曲线讲什么？ |
 | 4 | `scripts/phase4_weather.py` | OLS 系数怎么解读？为什么温度要放二次项？ |
 | 5 | `scripts/phase5_forecast.py` | 滞后特征是什么？时间切分与随机切分差在哪？ |
-| 6 | `docs/report.md` + `docs/CV_HIGHLIGHTS.md` | 把 5 分钟讲法讲给同学听并录音复盘 |
+| 6 | `docs/report.md` + `docs/PROJECT_HIGHLIGHTS.md` | 把讲解提纲讲给同学听并录音复盘 |
