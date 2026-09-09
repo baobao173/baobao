@@ -1,9 +1,13 @@
 name: Python checks
 on: [push, pull_request]
+permissions:
+  contents: read
 jobs:
   test:
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     strategy:
+      fail-fast: false
       matrix:
         project: [guess-number, citibike-tide-and-dispatch, road-safety-risk-analysis, retail-demand-inventory]
     steps:
