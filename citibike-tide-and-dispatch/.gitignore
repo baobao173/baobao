@@ -1,0 +1,17 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+.ipynb_checkpoints/
+
+# 原始数据（体积大且有版权，不入库；用 src/download_data.py 重新下载）
+data/raw/*.zip
+data/raw/*.csv
+data/raw/_*.bin
+
+# 清洗后的中间数据（可由脚本重新生成）
+data/processed/
+
+# 系统文件
+.DS_Store
+Thumbs.db

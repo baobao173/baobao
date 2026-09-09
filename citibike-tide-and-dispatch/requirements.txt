@@ -1,0 +1,15 @@
+# 数据分析与可视化
+pandas>=2.2
+numpy>=1.26
+matplotlib>=3.8
+seaborn>=0.13
+
+# 统计
+scipy>=1.11
+statsmodels>=0.14
+
+# 机器学习
+scikit-learn>=1.4
+
+# 下载
+requests>=2.31
