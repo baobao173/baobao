@@ -1,0 +1,9 @@
+# 本项目运行所需依赖（建议 Python 3.10+）
+# 安装：pip install -r requirements.txt
+pandas>=2.0
+numpy>=1.24
+matplotlib>=3.7
+seaborn>=0.12
+scipy>=1.10
+statsmodels>=0.14
+scikit-learn>=1.2

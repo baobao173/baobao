@@ -1,0 +1,4 @@
+﻿metric,value
+n_train,264465.0
+n_test,113343.0
+roc_auc,0.5967
