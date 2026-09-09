@@ -26,6 +26,5 @@ python -m unittest discover -s tests -v
 
 - [分析报告](docs/report.md)
 - [数据与方法](docs/methodology.md)
-- [学习笔记](docs/learning_notes.md)
 
 `scripts/` 是分析代码，`output/` 保存图表和结果，`data/` 为本地生成的数据。代码使用 [MIT 许可](LICENSE)，数据来源与许可见方法说明。

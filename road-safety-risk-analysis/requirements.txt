@@ -1,4 +1,4 @@
-# 本项目运行所需依赖（建议 Python 3.10+）
+# 本项目运行所需依赖（Python 3.12）
 # 安装：pip install -r requirements.txt
 pandas>=2.0
 numpy>=1.24
