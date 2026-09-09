@@ -46,7 +46,7 @@ def main() -> None:
     path = viz.plot_hourly_demand(df)
     print("图表已保存:", path)
 
-    # 关键摘要（供后续 README / 复试讲解引用）
+    # 输出工作日和周末的峰值时段
     for is_we, label in [(False, "工作日"), (True, "周末")]:
         s = avg[is_we]
         peak_hour = int(s.idxmax())

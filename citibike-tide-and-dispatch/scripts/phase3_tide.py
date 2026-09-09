@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import sys
 from pathlib import Path
+from textwrap import fill
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -50,18 +51,18 @@ def fig_top_tide(station: pd.DataFrame) -> Path:
     """图 6：早高峰净流出最大（净借出站点）与净归还最大（净归还站点）的站点各 15 个。"""
     top_supply = station.nlargest(15, "net_morning")[::-1]  # 供给端：车从这里被骑走
     top_demand = station.nsmallest(15, "net_morning")[::-1]  # 需求端：车在这里堆积
-    fig, axes = plt.subplots(1, 2, figsize=(15, 6.5))
+    fig, axes = plt.subplots(1, 2, figsize=(16, 8.5))
 
-    for ax, data, color, title, unit in [
-        (axes[0], top_supply, "#d62728", "净借出最多的 15 个站点", ""),
-        (axes[1], top_demand, "#1f77b4", "净归还最多的 15 个站点", ""),
+    for ax, data, color, title in [
+        (axes[0], top_supply, "#d62728", "净借出最多的 15 个站点"),
+        (axes[1], top_demand, "#1f77b4", "净归还最多的 15 个站点"),
     ]:
         vals = (
             data["net_morning"].values
             if color.startswith("#d")
             else -data["net_morning"].values
         )
-        names = [str(n).replace(" & ", " &\n")[:22] for n in data["station_name"]]
+        names = [fill(str(n), width=24) for n in data["station_name"]]
         ax.barh(range(len(data)), vals, color=color, alpha=0.85)
         ax.set_yticks(range(len(data)))
         ax.set_yticklabels(names, fontsize=8)
@@ -73,6 +74,7 @@ def fig_top_tide(station: pd.DataFrame) -> Path:
             ax.text(v, i, f" {v:,.0f}", va="center", fontsize=8)
 
     fig.suptitle("图 6  工作日早高峰站点净流量排名", fontsize=13)
+    fig.tight_layout(rect=(0, 0, 1, 0.95), w_pad=3)
     return viz.save_fig(fig, "fig06_top_tide_stations.png")
 
 

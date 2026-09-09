@@ -66,7 +66,7 @@ def plot_hourly_demand(
             color=colors[is_we],
             label=labels[is_we],
         )
-    # 标注两个高峰，方便复试口头讲解
+    # 标注工作日早晚高峰
     for h in (8, 18):
         ax.axvline(h, color="gray", ls="--", lw=1, alpha=0.6)
     ax.set_xlabel("出发小时")

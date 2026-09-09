@@ -13,7 +13,7 @@ API = "https://archive-api.open-meteo.com/v1/archive"
 # 纽约中央公园附近（Citi Bike 服务区中心地带）
 LAT, LNG = 40.7794, -73.9692
 
-# WMO 天气码 -> 简化天气分类（用于分析与绘图，面试时能一句话讲清）
+# WMO 天气码 -> 简化天气分类（用于分析与绘图）
 WMO_MAP = {
     0: "晴",
     1: "多云",

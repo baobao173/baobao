@@ -30,6 +30,6 @@ python -m unittest discover -s tests -v
 
 - [分析报告](docs/report.md)：数据、方法、结果和局限
 - [数据说明](docs/data_dictionary.md)：来源、字段与时间口径
-- [学习笔记](docs/learning_notes.md)：方法解释与复现练习
+- [方法说明](docs/methodology.md)：净流量、预测特征与评价指标
 
 `src/` 负责下载、清洗和绘图设置，`scripts/` 是分析入口，`output/` 保存结果。代码使用 [MIT 许可](LICENSE)，数据条款见数据说明。
