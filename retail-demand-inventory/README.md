@@ -6,10 +6,10 @@
 
 <!-- RESULTS_START -->
 
-- **实际规模**：1,067,371 条原始交易，25 个常销商品，104 个完整周。
-- **预测**：移动平均测试 WAPE **48.79%**，较朴素预测降低 **21.0%**，本次也略优于岭回归。
-- **决策**：基础情景下，验证选择策略 C 的测试成本相对 A **上升 15.5%**。这表明验证选择不保证未来收益。
-- 成本是仿真假设单位；详见[完整结果](docs/analysis_report.md)。
+- 数据：1,067,371 条原始交易，25 个常销商品，104 个完整周。
+- 预测：四周移动平均测试 WAPE 为 48.79%，较上周销量基准降低 21.0%。
+- 库存：基础情景下，验证期选出的补货策略在测试期的成本，相较于移动平均、k=1 的基准上升 15.5%。
+- 成本以仿真假设单位计量，参数与结果见[分析报告](docs/analysis_report.md)。
 
 <!-- RESULTS_END -->
 
@@ -32,7 +32,6 @@ python scripts/verify_outputs.py
 
 - [分析报告](docs/analysis_report.md)
 - [方法说明](docs/methodology.md)
-- [学习笔记](docs/learning_notes.md)
 - [数据来源](data/README.md)
 - [Notebook](notebooks/01_exploration.ipynb)
 

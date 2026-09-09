@@ -7,37 +7,37 @@ root = Path(__file__).resolve().parents[1]
 nb = nbf.v4.new_notebook()
 nb.cells = [
     nbf.v4.new_markdown_cell(
-        "# 零售销量预测与库存决策\n先运行 `run_analysis.py`，再依次阅读。核心实现保留在 src 中。"
+        "# 零售销量预测与库存仿真\n\n读取 `run_analysis.py` 生成的结果表，展示商品样本、预测误差和补货策略。分析代码位于 `src/`。"
     ),
     nbf.v4.new_code_cell(
         "from pathlib import Path\nimport pandas as pd\nfrom IPython.display import display, Image\nroot = Path.cwd()\nif not (root / 'config.json').exists():\n    root = root.parent\nassert (root / 'config.json').exists()"
     ),
     nbf.v4.new_markdown_cell(
-        "## 1. 商品样本\n只在训练期按活跃度和销售额选样本。思考：用全时期选择会造成什么偏差？"
+        "## 商品样本\n\n商品仅按训练期活跃度和销售额筛选，验证期和测试期沿用同一组商品。"
     ),
     nbf.v4.new_code_cell(
         "products = pd.read_csv(root / 'outputs/tables/selected_products.csv')\ndisplay(products.head())\ndisplay(Image(filename=str(root / 'outputs/figures/03_volatility.png')))"
     ),
     nbf.v4.new_markdown_cell(
-        "## 2. 预测\n比较验证和测试，查看移动平均与岭回归能否稳定超越朴素规则。"
+        "## 预测结果\n\n比较上周销量、四周移动平均和岭回归在验证期与测试期的误差。"
     ),
     nbf.v4.new_code_cell(
         "scores = pd.read_csv(root / 'outputs/tables/forecast_metrics.csv')\ndisplay(scores)\ndisplay(Image(filename=str(root / 'outputs/figures/04_forecast.png')))"
     ),
     nbf.v4.new_markdown_cell(
-        "## 3. 补货决策\nC 在验证期选择，测试期不重新选择。成本为假设单位，不是实际利润。"
+        "## 补货策略\n\n策略 C 按验证期成本选择模型和安全库存系数，测试期锁定。成本使用假设单位。"
     ),
     nbf.v4.new_code_cell(
         "policies = pd.read_csv(root / 'outputs/tables/policy_comparison.csv')\ndisplay(policies.query('lead == 0 and penalty == 5'))\ndisplay(Image(filename=str(root / 'outputs/figures/07_tradeoff.png')))"
     ),
     nbf.v4.new_markdown_cell(
-        "## 4. 手工检查库存守恒\n可用库存 − 满足需求 = 期末库存；需求 = 满足量 + 缺货量。"
+        "## 库存明细\n\n期初库存 + 本周到货 − 满足量 = 期末库存；需求 = 满足量 + 缺货量。明细表由主程序生成，不提交仓库。"
     ),
     nbf.v4.new_code_cell(
         "trace = pd.read_csv(root / 'outputs/tables/inventory_traces.csv')\nexample = trace.query(\"split == 'test' and model == 'moving_average' and factor == 1 and lead == 0\")\ndisplay(example.head(8))\nassert ((trace.opening + trace.arrivals - trace.fulfilled - trace.ending).abs() < 1e-8).all()"
     ),
     nbf.v4.new_markdown_cell(
-        "## 5. 讨论\n1. 为什么成本最优方案未必有最低 MAE？\n2. 验证选择是否在测试期保持优势？\n3. 没有实际库存，结论能推广到哪里？\n\n完整回答及实际结论见 docs/analysis_report.md。"
+        "## 结果解释\n\n预测误差、满足率和成本分别衡量不同方面的表现。仿真采用历史销量作为需求代理，交期与持有成本由情景设定，结论适用于这些假设。详细结果见[分析报告](../docs/analysis_report.md)。"
     ),
 ]
 nb.metadata = {
